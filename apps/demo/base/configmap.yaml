@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-runtime
+data:
+  APP_VERSION: v1
+  OPS_BANNER_TEXT: "demo-banner=v3"

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-client
+  template:
+    metadata:
+      labels:
+        app: demo-client
+    spec:
+      containers:
+        - name: client
+          image: demo-client:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 2
+          volumeMounts:
+            - name: runtime-config
+              mountPath: /usr/share/nginx/html/ops-banner.txt
+              subPath: OPS_BANNER_TEXT
+      volumes:
+        - name: runtime-config
+          configMap:
+            name: demo-runtime
+            items:
+              - key: OPS_BANNER_TEXT
+                path: OPS_BANNER_TEXT
